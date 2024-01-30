@@ -1,0 +1,96 @@
+[gd_scene load_steps=18 format=3 uid="uid://bc3ywf2tmkwm8"]
+
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_7k4xl"]
+[ext_resource type="Resource" path="res://terrain/data.hterrain" id="2_3n07x"]
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="3_dgx8q"]
+[ext_resource type="Texture2D" uid="uid://cc2xnuhn07anb" path="res://textures/hoth_slot0_albedo_bump.png" id="4_m5yt5"]
+[ext_resource type="Texture2D" uid="uid://c3xtilffbhm7o" path="res://textures/hoth_slot1_albedo_bump.png" id="5_bkgxc"]
+[ext_resource type="Texture2D" uid="uid://boae52begw6iv" path="res://textures/hoth_slot0_normal_roughness.png" id="6_jehhu"]
+[ext_resource type="PackedScene" uid="uid://qyr1hqgijynt" path="res://models/snowspeeder.blend" id="8_g7k7c"]
+[ext_resource type="Script" path="res://Player.cs" id="9_62fge"]
+[ext_resource type="PackedScene" uid="uid://cbwrl073vnuv" path="res://models/hoth_hanger.blend" id="9_b88pn"]
+[ext_resource type="Script" path="res://PhysicsHole.cs" id="9_woboj"]
+
+[sub_resource type="Resource" id="Resource_5go8h"]
+script = ExtResource("3_dgx8q")
+mode = 0
+textures = [[ExtResource("4_m5yt5"), ExtResource("5_bkgxc")], [ExtResource("6_jehhu"), null]]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xuttj"]
+size = Vector3(42, 1, 84)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_17xw7"]
+size = Vector3(38.9287, 18.4453, 5.3541)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gfpha"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wq5ne"]
+
+[sub_resource type="Sky" id="Sky_y754s"]
+sky_material = SubResource("ProceduralSkyMaterial_wq5ne")
+
+[sub_resource type="Environment" id="Environment_y30e8"]
+background_mode = 2
+background_energy_multiplier = 2.5
+sky = SubResource("Sky_y754s")
+
+[node name="Scene" type="Node3D"]
+
+[node name="HTerrain" type="Node3D" parent="."]
+script = ExtResource("1_7k4xl")
+_terrain_data = ExtResource("2_3n07x")
+chunk_size = 32
+collision_enabled = true
+collision_layer = 2
+collision_mask = 2
+shader_type = "Classic4Lite"
+custom_shader = null
+custom_globalmap_shader = null
+texture_set = SubResource("Resource_5go8h")
+render_layers = 1
+cast_shadow = 1
+shader_params/u_ground_uv_scale = 20
+shader_params/u_depth_blending = true
+shader_params/u_triplanar = null
+shader_params/u_tile_reduction = null
+
+[node name="snowspeeder" parent="." instance=ExtResource("8_g7k7c")]
+transform = Transform3D(-0.95518, 0, -0.296025, 0, 1, 0, 0.296025, 0, -0.95518, 85.0551, 0.656884, 159.626)
+
+[node name="hoth_hanger" parent="." instance=ExtResource("9_b88pn")]
+transform = Transform3D(-0.974956, 0, -0.2224, 0, 1, 0, 0.2224, 0, -0.974956, 89.6598, 0.619651, 136.568)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="hoth_hanger"]
+disable_mode = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="hoth_hanger/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.137512, -0.5, -0.602814)
+shape = SubResource("BoxShape3D_xuttj")
+
+[node name="cutter_0" type="Area3D" parent="hoth_hanger"]
+transform = Transform3D(0.999999, 0, -1.49012e-08, 0, 1, 0, 1.49012e-08, 0, 0.999999, 0, 8, -40)
+script = ExtResource("9_woboj")
+
+[node name="cutter_0_shape" type="CollisionShape3D" parent="hoth_hanger/cutter_0"]
+shape = SubResource("BoxShape3D_17xw7")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(-0.959996, 0, -0.280013, 0, 1, 0, 0.280013, 0, -0.959996, 83.5077, 1.70719, 155.22)
+disable_mode = 2
+collision_mask = 3
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+script = ExtResource("9_62fge")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_gfpha")
+
+[node name="Camera3D" type="Camera3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.515796, 0)
+environment = SubResource("Environment_y30e8")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.840472, 0.325499, -0.433194, -0.044493, 0.838222, 0.543511, 0.540025, -0.437532, 0.718985, 76.3491, 2.78864, 199.969)
+light_energy = 0.356
+light_indirect_energy = 1.381
+shadow_enabled = true
