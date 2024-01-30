@@ -20,7 +20,7 @@ textures = [[ExtResource("4_m5yt5"), ExtResource("5_bkgxc")], [ExtResource("6_je
 size = Vector3(42, 1, 84)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_17xw7"]
-size = Vector3(38.9287, 18.4453, 5.3541)
+size = Vector3(38.9287, 16.0701, 5.3541)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gfpha"]
 
