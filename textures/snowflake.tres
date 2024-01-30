@@ -1,0 +1,14 @@
+[gd_resource type="ParticleProcessMaterial" format=3 uid="uid://b2pa84altnllw"]
+
+[resource]
+lifetime_randomness = 0.43
+emission_shape = 3
+emission_box_extents = Vector3(100, 2, 100)
+spread = 0.0
+turbulence_enabled = true
+turbulence_noise_strength = 0.0
+turbulence_noise_scale = 0.13
+turbulence_noise_speed = Vector3(0.575, 0.045, 0.585)
+turbulence_noise_speed_random = 0.07
+turbulence_influence_min = 0.0
+turbulence_influence_max = 0.08

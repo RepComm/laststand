@@ -1,8 +1,9 @@
 using Godot;
 using System;
 
-public partial class Player : CharacterBody3D
-{
+public partial class Player : CharacterBody3D {
+  Camera3D camera;
+
 	public const float Speed = 5.0f;
 	public const float JumpVelocity = 4.5f;
 
@@ -26,6 +27,11 @@ public partial class Player : CharacterBody3D
       }
     }
   }
+
+  public override void _Ready() {
+    this.camera = GetNode<Camera3D>("Camera3D");
+  }
+
   public override void _Process(double delta) {
     if (Input.IsActionPressed("MouseReleaseCapture")) {
       Input.MouseMode = Input.MouseModeEnum.Visible;
@@ -57,5 +63,13 @@ public partial class Player : CharacterBody3D
 
 		Velocity = velocity;
 		MoveAndSlide();
+
+
+    this.camera.RotateX(-this.look.Y * this.lookSensitivity);
+    this.RotateY(-this.look.X * this.lookSensitivity);
+
+    //consume look movement
+    this.look.X = 0;
+    this.look.Y = 0;
 	}
 }

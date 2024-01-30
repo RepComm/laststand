@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bc3ywf2tmkwm8"]
+[gd_scene load_steps=23 format=3 uid="uid://bc3ywf2tmkwm8"]
 
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_7k4xl"]
 [ext_resource type="Resource" path="res://terrain/data.hterrain" id="2_3n07x"]
@@ -10,6 +10,8 @@
 [ext_resource type="Script" path="res://Player.cs" id="9_62fge"]
 [ext_resource type="PackedScene" uid="uid://cbwrl073vnuv" path="res://models/hoth_hanger.blend" id="9_b88pn"]
 [ext_resource type="Script" path="res://PhysicsHole.cs" id="9_woboj"]
+[ext_resource type="Texture2D" uid="uid://6sodvieatdkl" path="res://textures/snowflake.png" id="11_wykkb"]
+[ext_resource type="Material" uid="uid://b2pa84altnllw" path="res://textures/snowflake.tres" id="12_6o85b"]
 
 [sub_resource type="Resource" id="Resource_5go8h"]
 script = ExtResource("3_dgx8q")
@@ -20,7 +22,7 @@ textures = [[ExtResource("4_m5yt5"), ExtResource("5_bkgxc")], [ExtResource("6_je
 size = Vector3(42, 1, 84)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_17xw7"]
-size = Vector3(38.9287, 16.0701, 5.3541)
+size = Vector3(38.9287, 16.0701, 9)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gfpha"]
 
@@ -31,8 +33,26 @@ sky_material = SubResource("ProceduralSkyMaterial_wq5ne")
 
 [sub_resource type="Environment" id="Environment_y30e8"]
 background_mode = 2
-background_energy_multiplier = 2.5
+background_energy_multiplier = 2.11
 sky = SubResource("Sky_y754s")
+ambient_light_source = 3
+glow_enabled = true
+glow_bloom = 0.12
+fog_enabled = true
+fog_light_color = Color(0.611765, 0.643137, 0.698039, 1)
+fog_sun_scatter = 0.1
+fog_density = 0.0039
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2e7i7"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("11_wykkb")
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_7ntoc"]
+
+[sub_resource type="Skin" id="Skin_7j5ut"]
 
 [node name="Scene" type="Node3D"]
 
@@ -68,7 +88,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.137512, -0.5, -0.602814)
 shape = SubResource("BoxShape3D_xuttj")
 
 [node name="cutter_0" type="Area3D" parent="hoth_hanger"]
-transform = Transform3D(0.999999, 0, -1.49012e-08, 0, 1, 0, 1.49012e-08, 0, 0.999999, 0, 8, -40)
+transform = Transform3D(0.999999, 0, -1.49012e-08, 0, 1, 0, 1.49012e-08, 0, 0.999999, 0, 8, -38)
 script = ExtResource("9_woboj")
 
 [node name="cutter_0_shape" type="CollisionShape3D" parent="hoth_hanger/cutter_0"]
@@ -94,3 +114,16 @@ transform = Transform3D(0.840472, 0.325499, -0.433194, -0.044493, 0.838222, 0.54
 light_energy = 0.356
 light_indirect_energy = 1.381
 shadow_enabled = true
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.074, 89.9138, 285.03)
+material_override = SubResource("StandardMaterial3D_2e7i7")
+cast_shadow = 0
+gi_mode = 0
+amount = 1000
+lifetime = 17.54
+preprocess = 1.64
+visibility_aabb = AABB(-134.984, -80.3304, -74.4996, 269.968, 160.661, 148.999)
+process_material = ExtResource("12_6o85b")
+draw_pass_1 = SubResource("QuadMesh_7ntoc")
+draw_skin = SubResource("Skin_7j5ut")
