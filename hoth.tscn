@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://bc3ywf2tmkwm8"]
+[gd_scene load_steps=29 format=3 uid="uid://bc3ywf2tmkwm8"]
 
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_7k4xl"]
 [ext_resource type="Resource" path="res://terrain/data.hterrain" id="2_3n07x"]
@@ -9,9 +9,13 @@
 [ext_resource type="PackedScene" uid="uid://qyr1hqgijynt" path="res://models/snowspeeder.blend" id="8_g7k7c"]
 [ext_resource type="Script" path="res://Player.cs" id="9_62fge"]
 [ext_resource type="PackedScene" uid="uid://cbwrl073vnuv" path="res://models/hoth_hanger.blend" id="9_b88pn"]
+[ext_resource type="AudioStream" uid="uid://dsjxqjpxk3s6g" path="res://audio/wind.wav" id="9_j8cyw"]
 [ext_resource type="Script" path="res://PhysicsHole.cs" id="9_woboj"]
 [ext_resource type="Texture2D" uid="uid://6sodvieatdkl" path="res://textures/snowflake.png" id="11_wykkb"]
+[ext_resource type="Script" path="res://HoverVehicle.cs" id="12_0qsij"]
 [ext_resource type="Material" uid="uid://b2pa84altnllw" path="res://textures/snowflake.tres" id="12_6o85b"]
+[ext_resource type="AudioStream" uid="uid://byo8ndbtug47p" path="res://audio/snowspeeder_hover.wav" id="14_ltgwg"]
+[ext_resource type="Script" path="res://Interactable.cs" id="15_gab4r"]
 
 [sub_resource type="Resource" id="Resource_5go8h"]
 script = ExtResource("3_dgx8q")
@@ -54,6 +58,12 @@ billboard_mode = 1
 
 [sub_resource type="Skin" id="Skin_7j5ut"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_55t5v"]
+size = Vector3(8.10305, 1.54745, 7.875)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3xva7"]
+size = Vector3(200.314, 46.6387, 75.7749)
+
 [node name="Scene" type="Node3D"]
 
 [node name="HTerrain" type="Node3D" parent="."]
@@ -74,9 +84,6 @@ shader_params/u_depth_blending = true
 shader_params/u_triplanar = null
 shader_params/u_tile_reduction = null
 
-[node name="snowspeeder" parent="." instance=ExtResource("8_g7k7c")]
-transform = Transform3D(-0.95518, 0, -0.296025, 0, 1, 0, 0.296025, 0, -0.95518, 85.0551, 0.656884, 159.626)
-
 [node name="hoth_hanger" parent="." instance=ExtResource("9_b88pn")]
 transform = Transform3D(-0.974956, 0, -0.2224, 0, 1, 0, 0.2224, 0, -0.974956, 89.6598, 0.619651, 136.568)
 
@@ -95,7 +102,7 @@ script = ExtResource("9_woboj")
 shape = SubResource("BoxShape3D_17xw7")
 
 [node name="Player" type="CharacterBody3D" parent="."]
-transform = Transform3D(-0.959996, 0, -0.280013, 0, 1, 0, 0.280013, 0, -0.959996, 83.5077, 1.70719, 155.22)
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 83.5077, 1.70719, 151.09)
 disable_mode = 2
 collision_mask = 3
 axis_lock_angular_x = true
@@ -108,6 +115,13 @@ shape = SubResource("CapsuleShape3D_gfpha")
 [node name="Camera3D" type="Camera3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.515796, 0)
 environment = SubResource("Environment_y30e8")
+
+[node name="RayInteract" type="RayCast3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.515796, 0)
+target_position = Vector3(0, 0, -6)
+
+[node name="AudioListener3D" type="AudioListener3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.515796, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.840472, 0.325499, -0.433194, -0.044493, 0.838222, 0.543511, 0.540025, -0.437532, 0.718985, 76.3491, 2.78864, 199.969)
@@ -127,3 +141,36 @@ visibility_aabb = AABB(-134.984, -80.3304, -74.4996, 269.968, 160.661, 148.999)
 process_material = ExtResource("12_6o85b")
 draw_pass_1 = SubResource("QuadMesh_7ntoc")
 draw_skin = SubResource("Skin_7j5ut")
+
+[node name="SnowSpeeder" type="RigidBody3D" parent="."]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 85.0551, 0.902608, 159.626)
+script = ExtResource("12_0qsij")
+
+[node name="collider" type="CollisionShape3D" parent="SnowSpeeder"]
+transform = Transform3D(1, 0, 1.42109e-14, 0, 1, 0, -1.42109e-14, 0, 1, 0, 0.779031, 0)
+shape = SubResource("BoxShape3D_55t5v")
+
+[node name="snowspeeder" parent="SnowSpeeder" instance=ExtResource("8_g7k7c")]
+
+[node name="hover_audio" type="AudioStreamPlayer3D" parent="SnowSpeeder"]
+transform = Transform3D(1, 0, 1.42109e-14, 0, 1, 0, -1.42109e-14, 0, 1, 0, 0, 2.26949)
+stream = ExtResource("14_ltgwg")
+autoplay = true
+max_distance = 20.0
+
+[node name="Interact" type="Node3D" parent="SnowSpeeder"]
+script = ExtResource("15_gab4r")
+hudDisplayName = "Snowspeeder"
+hudDisplayDesc = "Hoth alliance vehicle, kinda clunky"
+type = "vehicle"
+
+[node name="WindArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 166.105, 23.811, 211.941)
+
+[node name="wind" type="AudioStreamPlayer3D" parent="WindArea"]
+stream = ExtResource("9_j8cyw")
+attenuation_model = 3
+autoplay = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WindArea"]
+shape = SubResource("BoxShape3D_3xva7")

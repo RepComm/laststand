@@ -3,6 +3,7 @@ using System;
 
 public partial class Player : CharacterBody3D {
   Camera3D camera;
+  RayCast3D rInteract;
 
 	public const float Speed = 5.0f;
 	public const float JumpVelocity = 4.5f;
@@ -14,6 +15,8 @@ public partial class Player : CharacterBody3D {
 
   [Export]
   float lookSensitivity = 0.005f;
+  RigidBody3D rbInteractLast;
+  Interactable interLast;
 
   public override void _Input(InputEvent @event) {
     if (@event is InputEventMouseButton emb) {
@@ -24,17 +27,51 @@ public partial class Player : CharacterBody3D {
       if (Input.MouseMode == Input.MouseModeEnum.Captured) {
         look.X = emm.Relative.X;
         look.Y = emm.Relative.Y;
+
+        if (this.rInteract.IsColliding()) {
+          var c = this.rInteract.GetCollider();
+          if (this.rbInteractLast == null || this.rbInteractLast != c) {
+            if (c is RigidBody3D) {
+              var rb = c as RigidBody3D;
+
+              this.rbInteractLast = rb;
+
+              var ch = rb.GetNodeOrNull("Interact");
+
+              if (ch != null && ch is Interactable) {
+                var inter = ch as Interactable;
+                this.interLast = inter;
+                // GD.Print(inter.hudDisplayName);
+              } else {
+                this.interLast = null;
+              }
+            }
+          }
+        } else {
+          this.rbInteractLast = null;
+          this.interLast = null;
+        }
       }
     }
   }
 
   public override void _Ready() {
     this.camera = GetNode<Camera3D>("Camera3D");
+    this.rInteract = GetNode<RayCast3D>("RayInteract");
+  }
+
+  public void handleInteract (Interactable inter) {
+    GD.Print(inter.hudDisplayName);
   }
 
   public override void _Process(double delta) {
     if (Input.IsActionPressed("MouseReleaseCapture")) {
       Input.MouseMode = Input.MouseModeEnum.Visible;
+    }
+    if (Input.IsActionJustPressed("Interact")) {
+      if (this.interLast != null) {
+        this.handleInteract(this.interLast);
+      }
     }
   }
 
