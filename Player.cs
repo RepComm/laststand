@@ -60,8 +60,52 @@ public partial class Player : CharacterBody3D {
     this.rInteract = GetNode<RayCast3D>("RayInteract");
   }
 
-  public void handleInteract (Interactable inter) {
-    GD.Print(inter.hudDisplayName);
+  public bool isControlling = true;
+  uint CollisionLayerPrevious = 0;
+  uint CollisionMaskPrevious = 0;
+  Node ParentPrevious = null;
+
+  public void handleInteract (RigidBody3D rb, Interactable inter) {
+    // GD.Print(inter.hudDisplayName);
+    if (inter.type == "vehicle") {
+      var m = rb.GetNodeOrNull("mount") as Node3D;
+      
+      if (m == null) return;
+
+      disablePhysics();
+      m.AddChild(this);
+      
+      Position = new();
+      GlobalRotation = m.GlobalRotation;
+    }
+  }
+
+  public void disablePhysics () {
+    if (!isControlling) return;
+    ParentPrevious = GetParent();
+    ParentPrevious.RemoveChild(this);
+    SetPhysicsProcess(false);
+    isControlling = false;
+    CollisionLayerPrevious = CollisionLayer;
+    CollisionLayer = 0;
+
+    CollisionMaskPrevious = CollisionMask;
+    CollisionMask = 0;
+  }
+  public void enablePhysics () {
+    if (isControlling) return;
+    var p = GetParent() as Node3D;
+    p.RemoveChild(this);
+
+    ParentPrevious.AddChild(this);
+    Position = p.GlobalPosition + new Vector3(0,1,0);
+
+    ParentPrevious = p;
+
+    SetPhysicsProcess(true);
+    CollisionLayer = CollisionLayerPrevious;
+    CollisionMask = CollisionMaskPrevious;
+    isControlling = true;
   }
 
   public override void _Process(double delta) {
@@ -69,8 +113,12 @@ public partial class Player : CharacterBody3D {
       Input.MouseMode = Input.MouseModeEnum.Visible;
     }
     if (Input.IsActionJustPressed("Interact")) {
-      if (this.interLast != null) {
-        this.handleInteract(this.interLast);
+      if (!this.isControlling) {
+        enablePhysics();
+      } else {
+        if (this.interLast != null) {
+          this.handleInteract(this.rbInteractLast, this.interLast);
+        }
       }
     }
   }

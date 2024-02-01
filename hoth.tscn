@@ -102,7 +102,7 @@ script = ExtResource("9_woboj")
 shape = SubResource("BoxShape3D_17xw7")
 
 [node name="Player" type="CharacterBody3D" parent="."]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 83.5077, 1.70719, 151.09)
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 84.8582, 2.66635, 153.144)
 disable_mode = 2
 collision_mask = 3
 axis_lock_angular_x = true
@@ -134,6 +134,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.074, 89.9138, 285.03)
 material_override = SubResource("StandardMaterial3D_2e7i7")
 cast_shadow = 0
 gi_mode = 0
+emitting = false
 amount = 1000
 lifetime = 17.54
 preprocess = 1.64
@@ -142,9 +143,16 @@ process_material = ExtResource("12_6o85b")
 draw_pass_1 = SubResource("QuadMesh_7ntoc")
 draw_skin = SubResource("Skin_7j5ut")
 
-[node name="SnowSpeeder" type="RigidBody3D" parent="."]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 85.0551, 0.902608, 159.626)
+[node name="SnowSpeeder" type="RigidBody3D" parent="." node_paths=PackedStringArray("driver")]
+transform = Transform3D(-0.810287, 0, -0.586033, 0, 1, 0, 0.586033, 0, -0.810287, 85.0551, 0.902608, 159.626)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+continuous_cd = true
 script = ExtResource("12_0qsij")
+vTakeoff = Vector3(0, 15, -4)
+driver = NodePath("../Player")
+hoverAltMin = 3.0
+hoverAltMax = 5.0
 
 [node name="collider" type="CollisionShape3D" parent="SnowSpeeder"]
 transform = Transform3D(1, 0, 1.42109e-14, 0, 1, 0, -1.42109e-14, 0, 1, 0, 0.779031, 0)
@@ -163,6 +171,11 @@ script = ExtResource("15_gab4r")
 hudDisplayName = "Snowspeeder"
 hudDisplayDesc = "Hoth alliance vehicle, kinda clunky"
 type = "vehicle"
+
+[node name="altimeter" type="RayCast3D" parent="SnowSpeeder"]
+
+[node name="mount" type="Node3D" parent="SnowSpeeder"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.67739, 0)
 
 [node name="WindArea" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 166.105, 23.811, 211.941)
