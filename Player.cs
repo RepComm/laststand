@@ -15,8 +15,9 @@ public partial class Player : CharacterBody3D {
 
   [Export]
   float lookSensitivity = 0.005f;
-  RigidBody3D rbInteractLast;
-  Interactable interLast;
+  RigidBody3D lastInteractRigidBody;
+  Interactable lastInteractable;
+  Rider rider;
 
   public override void _Input(InputEvent @event) {
     if (@event is InputEventMouseButton emb) {
@@ -30,26 +31,26 @@ public partial class Player : CharacterBody3D {
 
         if (this.rInteract.IsColliding()) {
           var c = this.rInteract.GetCollider();
-          if (this.rbInteractLast == null || this.rbInteractLast != c) {
+          if (this.lastInteractRigidBody == null || this.lastInteractRigidBody != c) {
             if (c is RigidBody3D) {
               var rb = c as RigidBody3D;
 
-              this.rbInteractLast = rb;
+              this.lastInteractRigidBody = rb;
 
               var ch = rb.GetNodeOrNull("Interact");
 
               if (ch != null && ch is Interactable) {
                 var inter = ch as Interactable;
-                this.interLast = inter;
+                this.lastInteractable = inter;
                 // GD.Print(inter.hudDisplayName);
               } else {
-                this.interLast = null;
+                this.lastInteractable = null;
               }
             }
           }
         } else {
-          this.rbInteractLast = null;
-          this.interLast = null;
+          this.lastInteractRigidBody = null;
+          this.lastInteractable = null;
         }
       }
     }
@@ -57,35 +58,18 @@ public partial class Player : CharacterBody3D {
 
   public override void _Ready() {
     this.camera = GetNode<Camera3D>("Camera3D");
-    this.rInteract = GetNode<RayCast3D>("RayInteract");
-  }
+    this.rInteract = this.camera.GetNode<RayCast3D>("RayInteract");
 
-  public bool isControlling = true;
+    this.rider = GetNode<Rider>("Rider");
+  }
   uint CollisionLayerPrevious = 0;
   uint CollisionMaskPrevious = 0;
   Node ParentPrevious = null;
 
-  public void handleInteract (RigidBody3D rb, Interactable inter) {
-    // GD.Print(inter.hudDisplayName);
-    if (inter.type == "vehicle") {
-      var m = rb.GetNodeOrNull("mount") as Node3D;
-      
-      if (m == null) return;
-
-      disablePhysics();
-      m.AddChild(this);
-      
-      Position = new();
-      GlobalRotation = m.GlobalRotation;
-    }
-  }
-
   public void disablePhysics () {
-    if (!isControlling) return;
     ParentPrevious = GetParent();
     ParentPrevious.RemoveChild(this);
     SetPhysicsProcess(false);
-    isControlling = false;
     CollisionLayerPrevious = CollisionLayer;
     CollisionLayer = 0;
 
@@ -93,7 +77,6 @@ public partial class Player : CharacterBody3D {
     CollisionMask = 0;
   }
   public void enablePhysics () {
-    if (isControlling) return;
     var p = GetParent() as Node3D;
     p.RemoveChild(this);
 
@@ -105,22 +88,60 @@ public partial class Player : CharacterBody3D {
     SetPhysicsProcess(true);
     CollisionLayer = CollisionLayerPrevious;
     CollisionMask = CollisionMaskPrevious;
-    isControlling = true;
   }
-
+  
   public override void _Process(double delta) {
+
+    this.updateCameraLook();
+
     if (Input.IsActionPressed("MouseReleaseCapture")) {
       Input.MouseMode = Input.MouseModeEnum.Visible;
     }
+
     if (Input.IsActionJustPressed("Interact")) {
-      if (!this.isControlling) {
-        enablePhysics();
+      GD.Print("Interact -> Riding: " + this.rider.isRiding() );
+      //if we're riding and we press E, unmount
+      if (this.rider.isRiding()) {
+        this.rider.unmount();
       } else {
-        if (this.interLast != null) {
-          this.handleInteract(this.rbInteractLast, this.interLast);
+        
+        if (this.lastInteractable == null) return;
+
+        //otherwise handle different interactions
+        if (this.lastInteractable.type == "vehicle") {
+          //try and get the mount point
+          var m = this.lastInteractable.GetParent().GetNode<Mountable>("Mountable");
+          if (m == null) return;
+
+          //try to mount it
+          this.rider.mount(m);
         }
       }
     }
+
+  }
+
+  public void onMount (MountSlot m, Rider r) {
+    this.disablePhysics();
+
+    m.AddChild(this);
+
+    Position = new();
+    GlobalRotation = m.GlobalRotation;
+    GD.Print("Player Mount");
+  }
+  public void onUnmount (MountSlot m, Rider r) {
+    GD.Print("Player Unmount");
+    this.enablePhysics();
+  }
+
+  public void updateCameraLook () {
+    this.camera.RotateX(-this.look.Y * this.lookSensitivity);
+    this.RotateY(-this.look.X * this.lookSensitivity);
+
+    //consume look movement
+    this.look.X = 0;
+    this.look.Y = 0;
   }
 
 	public override void _PhysicsProcess(double delta) {
@@ -149,12 +170,6 @@ public partial class Player : CharacterBody3D {
 		Velocity = velocity;
 		MoveAndSlide();
 
-
-    this.camera.RotateX(-this.look.Y * this.lookSensitivity);
-    this.RotateY(-this.look.X * this.lookSensitivity);
-
-    //consume look movement
-    this.look.X = 0;
-    this.look.Y = 0;
+    // this.updateCameraLook();
 	}
 }
