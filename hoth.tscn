@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://bc3ywf2tmkwm8"]
+[gd_scene load_steps=34 format=3 uid="uid://bc3ywf2tmkwm8"]
 
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_7k4xl"]
 [ext_resource type="Resource" path="res://terrain/data.hterrain" id="2_3n07x"]
@@ -12,6 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://dsjxqjpxk3s6g" path="res://audio/wind.wav" id="9_j8cyw"]
 [ext_resource type="Script" path="res://PhysicsHole.cs" id="9_woboj"]
 [ext_resource type="Script" path="res://scripts/Rider.cs" id="10_v0bn2"]
+[ext_resource type="Script" path="res://scripts/InteractRay.cs" id="10_x7t6c"]
 [ext_resource type="Texture2D" uid="uid://6sodvieatdkl" path="res://textures/snowflake.png" id="11_wykkb"]
 [ext_resource type="Script" path="res://HoverVehicle.cs" id="12_0qsij"]
 [ext_resource type="Material" uid="uid://b2pa84altnllw" path="res://textures/snowflake.tres" id="12_6o85b"]
@@ -122,10 +123,11 @@ shape = SubResource("CapsuleShape3D_gfpha")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.515796, 0)
 environment = SubResource("Environment_y30e8")
 
-[node name="RayInteract" type="RayCast3D" parent="Player/Camera3D"]
+[node name="InteractRay" type="RayCast3D" parent="Player/Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.857086)
 exclude_parent = false
 target_position = Vector3(0, 0, -6)
+script = ExtResource("10_x7t6c")
 
 [node name="AudioListener3D" type="AudioListener3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.515796, 0)
@@ -212,5 +214,6 @@ shape = SubResource("BoxShape3D_3xva7")
 [node name="hoth_generator" parent="." instance=ExtResource("20_m1ybq")]
 transform = Transform3D(0.681475, 0, -0.731842, 0, 1, 0, 0.731842, 0, 0.681475, 104.18, 0, 389.135)
 
+[connection signal="OnInteract" from="Player/Camera3D/InteractRay" to="Player" method="onInteract"]
 [connection signal="OnMount" from="Player/Rider" to="Player" method="onMount"]
 [connection signal="OnUnmount" from="Player/Rider" to="Player" method="onUnmount"]

@@ -3,7 +3,6 @@ using System;
 
 public partial class Player : CharacterBody3D {
   Camera3D camera;
-  RayCast3D rInteract;
 
 	public const float Speed = 5.0f;
 	public const float JumpVelocity = 4.5f;
@@ -15,9 +14,13 @@ public partial class Player : CharacterBody3D {
 
   [Export]
   float lookSensitivity = 0.005f;
-  RigidBody3D lastInteractRigidBody;
-  Interactable lastInteractable;
   Rider rider;
+
+  Interactable iCurrent;
+
+  public void onInteract (InteractRay ray, Interactable prev, Interactable curr) {
+    this.iCurrent = curr;
+  }
 
   public override void _Input(InputEvent @event) {
     if (@event is InputEventMouseButton emb) {
@@ -28,38 +31,12 @@ public partial class Player : CharacterBody3D {
       if (Input.MouseMode == Input.MouseModeEnum.Captured) {
         look.X = emm.Relative.X;
         look.Y = emm.Relative.Y;
-
-        if (this.rInteract.IsColliding()) {
-          var c = this.rInteract.GetCollider();
-          if (this.lastInteractRigidBody == null || this.lastInteractRigidBody != c) {
-            if (c is RigidBody3D) {
-              var rb = c as RigidBody3D;
-
-              this.lastInteractRigidBody = rb;
-
-              var ch = rb.GetNodeOrNull("Interact");
-
-              if (ch != null && ch is Interactable) {
-                var inter = ch as Interactable;
-                this.lastInteractable = inter;
-                // GD.Print(inter.hudDisplayName);
-              } else {
-                this.lastInteractable = null;
-              }
-            }
-          }
-        } else {
-          this.lastInteractRigidBody = null;
-          this.lastInteractable = null;
-        }
       }
     }
   }
 
   public override void _Ready() {
     this.camera = GetNode<Camera3D>("Camera3D");
-    this.rInteract = this.camera.GetNode<RayCast3D>("RayInteract");
-
     this.rider = GetNode<Rider>("Rider");
   }
   uint CollisionLayerPrevious = 0;
@@ -100,17 +77,20 @@ public partial class Player : CharacterBody3D {
 
     if (Input.IsActionJustPressed("Interact")) {
       GD.Print("Interact -> Riding: " + this.rider.isRiding() );
-      //if we're riding and we press E, unmount
+      
       if (this.rider.isRiding()) {
+      //Interact while riding == stop riding
         this.rider.unmount();
       } else {
         
-        if (this.lastInteractable == null) return;
+        //Interact while not riding + looking at vehicle == start riding
 
+        //check if we're trying to interact with a vehicle
+        if (this.iCurrent == null) return;
         //otherwise handle different interactions
-        if (this.lastInteractable.type == "vehicle") {
+        if (this.iCurrent.type == "vehicle") {
           //try and get the mount point
-          var m = this.lastInteractable.GetParent().GetNode<Mountable>("Mountable");
+          var m = this.iCurrent.GetParent().GetNode<Mountable>("Mountable");
           if (m == null) return;
 
           //try to mount it
