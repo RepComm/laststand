@@ -12,7 +12,12 @@ public partial class Mountable : Node3D {
 
   MountSlot[] slots;
 
-  public MountSlot[] getMountSlots () {
+  private int riderCount = 0;
+  public bool hasAnyRiders {
+    get { return this.riderCount > 0; }
+  }
+
+  private MountSlot[] getMountSlots () {
     var children = GetChildren();
     var results = new Array<MountSlot>();
     
@@ -54,9 +59,11 @@ public partial class Mountable : Node3D {
   }
   /**Returns true on success, false if rider was not mounted in the first place
    */
-  public bool unmountSlot (Rider rider, MountSlot slot) {
+  public bool unmountSlot (Rider rider, MountSlot slot) { 
     if (slot.unmount(rider)) {
       EmitSignal(SignalName.OnUnmount, slot, rider);
+      this.riderCount --;
+      if (this.riderCount < 0) this.riderCount = 0;
       return true;
     }
     return false;
@@ -79,6 +86,7 @@ public partial class Mountable : Node3D {
     if (slot == null) return false;
     if (slot.mount(rider)) {
       EmitSignal(SignalName.OnMount, slot, rider);
+      this.riderCount ++;
       return true;
     }
     return false;

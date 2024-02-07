@@ -22,7 +22,8 @@ public partial class HoverVehicle : RigidBody3D {
   [Export]
   public float startDelay = 4f;
   [Export]
-  public Player driver;
+  public Mountable mountable;
+
   [Export]
   public float hoverAltMin = 5f;
   [Export]
@@ -50,19 +51,29 @@ public partial class HoverVehicle : RigidBody3D {
 
 	public override void _Ready() {
     this.altimeter = GetNode<RayCast3D>("altimeter");
+    this.mountable = GetNode<Mountable>("Mountable");
+    GD.Print(this.mountable);
     this.SetMode(HoverMode.Landed);
 	}
 
   public void SetMode (HoverMode m) {
+    GD.Print("Mode was: " + this.hoverMode + ", now is: " + m);
     this.hoverMode = m;
   }
 
-  // public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
-  //   state.ApplyCentralForce(this.thrust);
-  //   base._IntegrateForces(state);
-  // }
+  public override void _Process(double delta) {
+    if (Input.IsActionJustPressed("engine_toggle")) {
+      if (this.mountable.hasAnyRiders) {
+        if (this.hoverMode == HoverMode.Landed || this.hoverMode == HoverMode.Landing) {
+          this.SetMode(HoverMode.TakingOff);
+        } else {
+          this.SetMode(HoverMode.Landing);
+        }
+      }
+    }
+  }
 
-	public override void _PhysicsProcess(double delta) {
+  public override void _PhysicsProcess(double delta) {
     //If landed, nothing to do
     if (this.hoverMode == HoverMode.Landed) {
       this.thrust.X = 0;
@@ -76,7 +87,7 @@ public partial class HoverVehicle : RigidBody3D {
     }
 
     //if no driver but we're not landing (and not landed), land please
-    if (this.driver == null && this.hoverMode != HoverMode.Landing) {
+    if (!this.mountable.hasAnyRiders && this.hoverMode != HoverMode.Landing && this.hoverMode != HoverMode.Landed) {
       this.SetMode(HoverMode.Landing);
     }
 
@@ -85,6 +96,11 @@ public partial class HoverVehicle : RigidBody3D {
       this.thrust.X = 0;
       this.thrust.Y = 0;
       this.thrust.Z = 0;
+
+      if (this.altitude <= this.hoverAltMin) {
+        this.SetMode(HoverMode.Landed);
+      }
+
     } else if (this.hoverMode == HoverMode.TakingOff) {
       if (this.altitude > this.hoverAltMin) {
         this.SetMode(HoverMode.HoverIdle);

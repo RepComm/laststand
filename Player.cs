@@ -76,7 +76,7 @@ public partial class Player : CharacterBody3D {
     }
 
     if (Input.IsActionJustPressed("Interact")) {
-      GD.Print("Interact -> Riding: " + this.rider.isRiding() );
+      // GD.Print("Interact -> Riding: " + this.rider.isRiding() );
       
       if (this.rider.isRiding()) {
       //Interact while riding == stop riding
@@ -90,12 +90,15 @@ public partial class Player : CharacterBody3D {
         //otherwise handle different interactions
         if (this.iCurrent.type == "vehicle") {
           //try and get the mount point
-          var m = this.iCurrent.GetParent().GetNode<Mountable>("Mountable");
-          if (m == null) return;
+          var m = this.iCurrent.GetParent().GetNode("Mountable");
+          if (m == null || m is not Mountable) return;
 
           //try to mount it
-          this.rider.mount(m);
+          this.rider.mount(m as Mountable);
         }
+
+        //notify interactable so it can send signals if applicable
+        this.iCurrent.interact();
       }
     }
 
@@ -108,10 +111,10 @@ public partial class Player : CharacterBody3D {
 
     Position = new();
     GlobalRotation = m.GlobalRotation;
-    GD.Print("Player Mount");
+    // GD.Print("Player Mount");
   }
   public void onUnmount (MountSlot m, Rider r) {
-    GD.Print("Player Unmount");
+    // GD.Print("Player Unmount");
     this.enablePhysics();
   }
 

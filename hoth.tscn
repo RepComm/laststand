@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://bc3ywf2tmkwm8"]
+[gd_scene load_steps=37 format=3 uid="uid://bc3ywf2tmkwm8"]
 
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_7k4xl"]
 [ext_resource type="Resource" path="res://terrain/data.hterrain" id="2_3n07x"]
@@ -6,10 +6,12 @@
 [ext_resource type="Texture2D" uid="uid://cc2xnuhn07anb" path="res://textures/hoth_slot0_albedo_bump.png" id="4_m5yt5"]
 [ext_resource type="Texture2D" uid="uid://c3xtilffbhm7o" path="res://textures/hoth_slot1_albedo_bump.png" id="5_bkgxc"]
 [ext_resource type="Texture2D" uid="uid://boae52begw6iv" path="res://textures/hoth_slot0_normal_roughness.png" id="6_jehhu"]
+[ext_resource type="PackedScene" uid="uid://6oofbfinkt8t" path="res://models/hoth_hanger.tscn" id="7_2q1wa"]
+[ext_resource type="Script" path="res://scripts/HothHanger.cs" id="8_6r0j4"]
 [ext_resource type="PackedScene" uid="uid://qyr1hqgijynt" path="res://models/snowspeeder.blend" id="8_g7k7c"]
 [ext_resource type="Script" path="res://Player.cs" id="9_62fge"]
-[ext_resource type="PackedScene" uid="uid://cbwrl073vnuv" path="res://models/hoth_hanger.blend" id="9_b88pn"]
 [ext_resource type="AudioStream" uid="uid://dsjxqjpxk3s6g" path="res://audio/wind.wav" id="9_j8cyw"]
+[ext_resource type="PackedScene" uid="uid://b1dp8dtj5tqr5" path="res://models/lever.blend" id="9_patle"]
 [ext_resource type="Script" path="res://PhysicsHole.cs" id="9_woboj"]
 [ext_resource type="Script" path="res://scripts/Rider.cs" id="10_v0bn2"]
 [ext_resource type="Script" path="res://scripts/InteractRay.cs" id="10_x7t6c"]
@@ -31,7 +33,10 @@ textures = [[ExtResource("4_m5yt5"), ExtResource("5_bkgxc")], [ExtResource("6_je
 size = Vector3(39.9999, 15.005, 6.23959)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_17xw7"]
-size = Vector3(3.85372, 3.32749, 5.3985)
+size = Vector3(4.68922, 3.01726, 5.20943)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dcdqh"]
+size = Vector3(0.511841, 0.733643, 1)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gfpha"]
 
@@ -89,24 +94,40 @@ shader_params/u_depth_blending = true
 shader_params/u_triplanar = null
 shader_params/u_tile_reduction = null
 
-[node name="hoth_hanger" parent="." instance=ExtResource("9_b88pn")]
+[node name="hoth_hanger2" parent="." instance=ExtResource("7_2q1wa")]
 transform = Transform3D(-0.974956, 0, -0.2224, 0, 1, 0, 0.2224, 0, -0.974956, 89.6598, 0.619651, 136.568)
+script = ExtResource("8_6r0j4")
 
-[node name="cutter_0" type="Area3D" parent="hoth_hanger"]
-transform = Transform3D(0.999999, 0, -4.47035e-08, 0, 1, 0, 4.47035e-08, 0, 0.999999, -1.90735e-05, -0.00200087, -41.2171)
+[node name="cutter_0" type="Area3D" parent="hoth_hanger2"]
+transform = Transform3D(-0.999999, 0, 8.9407e-08, 0, 1, 0, -8.9407e-08, 0, -0.999999, -0.0744438, 0.0323887, -37.443)
 script = ExtResource("9_woboj")
 
-[node name="cutter_0_shape" type="CollisionShape3D" parent="hoth_hanger/cutter_0"]
-transform = Transform3D(0.999999, 0, 5.96046e-08, 0, 1, 0, -5.96046e-08, 0, 0.999999, 0.00775528, 7.50307, 1.96771)
+[node name="cutter_0_shape" type="CollisionShape3D" parent="hoth_hanger2/cutter_0"]
+transform = Transform3D(0.999999, 0, 5.96046e-08, 0, 1, 0, -5.96046e-08, 0, 0.999999, 0.00775909, 7.50307, 1.96771)
 shape = SubResource("BoxShape3D_wpfr0")
 
-[node name="cutter_1" type="Area3D" parent="hoth_hanger"]
-transform = Transform3D(0.999999, 0, -3.42727e-07, 0, 1, 0, 3.42727e-07, 0, 0.999999, 69.7903, 0.775644, -249.873)
+[node name="cutter_1" type="Area3D" parent="hoth_hanger2"]
+transform = Transform3D(0.999999, 0, 0, 0, 1, 0, 0, 0, 0.999999, 69.8067, 1.08898, -249.793)
 script = ExtResource("9_woboj")
 
-[node name="cutter_1_shape" type="CollisionShape3D" parent="hoth_hanger/cutter_1"]
-transform = Transform3D(0.999999, 0, 1.78814e-07, 0, 1, 0, -1.78814e-07, 0, 0.999999, 1.09051, 0.562094, 0.844788)
+[node name="cutter_1_shape" type="CollisionShape3D" parent="hoth_hanger2/cutter_1"]
+transform = Transform3D(0.999999, 0, -4.17233e-07, 0, 1, 0, 4.17233e-07, 0, 0.999999, 1.54621, 0.406979, 0.794373)
 shape = SubResource("BoxShape3D_17xw7")
+
+[node name="LeverBody" type="StaticBody3D" parent="hoth_hanger2"]
+transform = Transform3D(-0.999946, 0, 0.0102967, 0, 1, 0, -0.0102967, 0, -0.999946, 16.5393, -0.00149244, -11.705)
+
+[node name="lever_shape" type="CollisionShape3D" parent="hoth_hanger2/LeverBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00387955, 0.36438, 0)
+shape = SubResource("BoxShape3D_dcdqh")
+
+[node name="Interactable" type="Node3D" parent="hoth_hanger2/LeverBody"]
+script = ExtResource("15_gab4r")
+hudDisplayName = "Hanger Door Control"
+hudDisplayDesc = "Opens/Closes hanger door"
+type = "door"
+
+[node name="LeverDisplay" parent="hoth_hanger2/LeverBody" instance=ExtResource("9_patle")]
 
 [node name="Player" type="CharacterBody3D" parent="."]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 84.8582, 2.66635, 153.144)
@@ -164,7 +185,6 @@ script = ExtResource("12_0qsij")
 vTakeoff = Vector3(0, 15, -4)
 hoverAltMin = 3.0
 hoverAltMax = 5.0
-hoverMode = 1
 
 [node name="collider" type="CollisionShape3D" parent="SnowSpeeder"]
 transform = Transform3D(1, 0, 1.42109e-14, 0, 1, 0, -1.42109e-14, 0, 1, 0, 0.779031, 0)
@@ -214,6 +234,7 @@ shape = SubResource("BoxShape3D_3xva7")
 [node name="hoth_generator" parent="." instance=ExtResource("20_m1ybq")]
 transform = Transform3D(0.681475, 0, -0.731842, 0, 1, 0, 0.731842, 0, 0.681475, 104.18, 0, 389.135)
 
+[connection signal="OnInteract" from="hoth_hanger2/LeverBody/Interactable" to="hoth_hanger2" method="toggle_doors"]
 [connection signal="OnInteract" from="Player/Camera3D/InteractRay" to="Player" method="onInteract"]
 [connection signal="OnMount" from="Player/Rider" to="Player" method="onMount"]
 [connection signal="OnUnmount" from="Player/Rider" to="Player" method="onUnmount"]
