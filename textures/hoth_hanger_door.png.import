@@ -2,9 +2,9 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bio4624f3ohpv"
-path.s3tc="res://.godot/imported/snowspeeder.png-756cb6608323573870d674a0b4b1c79a.s3tc.ctex"
-path.etc2="res://.godot/imported/snowspeeder.png-756cb6608323573870d674a0b4b1c79a.etc2.ctex"
+uid="uid://bcqjmpsxk0g51"
+path.s3tc="res://.godot/imported/hoth_hanger_door.png-22a8de571b2621189ee5ec11b57ba44e.s3tc.ctex"
+path.etc2="res://.godot/imported/hoth_hanger_door.png-22a8de571b2621189ee5ec11b57ba44e.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -12,8 +12,8 @@ metadata={
 
 [deps]
 
-source_file="res://models/snowspeeder.png"
-dest_files=["res://.godot/imported/snowspeeder.png-756cb6608323573870d674a0b4b1c79a.s3tc.ctex", "res://.godot/imported/snowspeeder.png-756cb6608323573870d674a0b4b1c79a.etc2.ctex"]
+source_file="res://textures/hoth_hanger_door.png"
+dest_files=["res://.godot/imported/hoth_hanger_door.png-22a8de571b2621189ee5ec11b57ba44e.s3tc.ctex", "res://.godot/imported/hoth_hanger_door.png-22a8de571b2621189ee5ec11b57ba44e.etc2.ctex"]
 
 [params]
 

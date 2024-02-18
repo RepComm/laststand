@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://boae52begw6iv"
 path.s3tc="res://.godot/imported/hoth_slot0_normal_roughness.png-6d96c5e99b656644cd481bc920e41c32.s3tc.ctex"
+path.etc2="res://.godot/imported/hoth_slot0_normal_roughness.png-6d96c5e99b656644cd481bc920e41c32.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://textures/hoth_slot0_normal_roughness.png"
-dest_files=["res://.godot/imported/hoth_slot0_normal_roughness.png-6d96c5e99b656644cd481bc920e41c32.s3tc.ctex"]
+dest_files=["res://.godot/imported/hoth_slot0_normal_roughness.png-6d96c5e99b656644cd481bc920e41c32.s3tc.ctex", "res://.godot/imported/hoth_slot0_normal_roughness.png-6d96c5e99b656644cd481bc920e41c32.etc2.ctex"]
 
 [params]
 

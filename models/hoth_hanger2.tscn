@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://b1glhbwct2c64"]
+
+[ext_resource type="PackedScene" uid="uid://cbwrl073vnuv" path="res://models/hoth_hanger.blend" id="1_vy2ow"]
+[ext_resource type="Animation" uid="uid://dhyfcul7h2wxp" path="res://models/hoth_hanger_close.res" id="2_00v3m"]
+[ext_resource type="Animation" uid="uid://bhxlvwbdrc4nt" path="res://models/hoth_hanger_open.res" id="3_xej87"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_prum1"]
+_data = {
+"hoth_hanger_close": ExtResource("2_00v3m"),
+"hoth_hanger_open": ExtResource("3_xej87")
+}
+
+[node name="hoth_hanger" instance=ExtResource("1_vy2ow")]
+
+[node name="AnimationPlayer" parent="." index="4"]
+libraries = {
+"normal": SubResource("AnimationLibrary_prum1")
+}

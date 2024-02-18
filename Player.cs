@@ -69,7 +69,7 @@ public partial class Player : CharacterBody3D {
   
   public override void _Process(double delta) {
 
-    this.updateCameraLook();
+    // this.updateCameraLook();
 
     if (Input.IsActionPressed("MouseReleaseCapture")) {
       Input.MouseMode = Input.MouseModeEnum.Visible;
@@ -111,6 +111,7 @@ public partial class Player : CharacterBody3D {
 
     Position = new();
     GlobalRotation = m.GlobalRotation;
+    this.camera.Rotation = new();
     // GD.Print("Player Mount");
   }
   public void onUnmount (MountSlot m, Rider r) {
@@ -153,6 +154,6 @@ public partial class Player : CharacterBody3D {
 		Velocity = velocity;
 		MoveAndSlide();
 
-    // this.updateCameraLook();
+    this.updateCameraLook();
 	}
 }

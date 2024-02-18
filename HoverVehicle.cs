@@ -48,26 +48,50 @@ public partial class HoverVehicle : RigidBody3D {
 
   [Export]
   HoverMode hoverMode = HoverMode.Landed;
+  public bool isDriving {
+    get {
+      return this.hoverMode != HoverMode.Landed && this.hoverMode != HoverMode.Landing;
+    }
+  }
 
 	public override void _Ready() {
     this.altimeter = GetNode<RayCast3D>("altimeter");
     this.mountable = GetNode<Mountable>("Mountable");
     GD.Print(this.mountable);
     this.SetMode(HoverMode.Landed);
+    this.targetRotation = this.Rotation;
+    this.displayRotation = this.Rotation;
 	}
 
   public void SetMode (HoverMode m) {
     GD.Print("Mode was: " + this.hoverMode + ", now is: " + m);
     this.hoverMode = m;
   }
+  Vector2 look = new();
+  //The value displayRotation lerps to
+  Vector3 targetRotation = new();
+  //The value used for rendering
+  Vector3 displayRotation = new();
+  float lookSensitivity = 0.0025f;
+
+  public override void _Input(InputEvent @event) {
+    if (!isDriving) return;
+
+    if (@event is InputEventMouseMotion emm) {
+      if (Input.MouseMode == Input.MouseModeEnum.Captured) {
+        look.X = emm.Relative.X;
+        look.Y = emm.Relative.Y;
+      }
+    }
+  }
 
   public override void _Process(double delta) {
-    if (Input.IsActionJustPressed("engine_toggle")) {
-      if (this.mountable.hasAnyRiders) {
-        if (this.hoverMode == HoverMode.Landed || this.hoverMode == HoverMode.Landing) {
-          this.SetMode(HoverMode.TakingOff);
-        } else {
+    if (this.mountable.hasAnyRiders) {
+      if (Input.IsActionJustPressed("engine_toggle")) {
+        if (this.isDriving) {
           this.SetMode(HoverMode.Landing);
+        } else {
+          this.SetMode(HoverMode.TakingOff);
         }
       }
     }
@@ -115,9 +139,31 @@ public partial class HoverVehicle : RigidBody3D {
       Vector3Set(ref this.thrust, this.vHoverBoost);
     }
 
-    // GD.Print(this.hoverMode);
     ApplyCentralForce(this.thrust * this.Basis.Transposed());
+    
+    this.targetRotation.X += -this.look.Y * lookSensitivity;
+    this.targetRotation.Y += -this.look.X * lookSensitivity;
 
+    this.displayRotation.Z = 0;
+
+    //why is this if statement actually necessary...
+    if (this.displayRotation != this.targetRotation) {
+      this.displayRotation = this.displayRotation.Slerp(
+        this.targetRotation,
+        0.025f
+      );
+    }
+
+    this.displayRotation.Z = (
+      this.targetRotation.Y - this.displayRotation.Y
+    ) / 10f;
+
+    this.Rotation = this.displayRotation;//this.targetRotation;
+    
+
+    //consume mouse movement for this frame
+    this.look.X = 0;
+    this.look.Y = 0;
 	}
 
 }
