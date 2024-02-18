@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://bc3ywf2tmkwm8"]
+[gd_scene load_steps=38 format=3 uid="uid://bc3ywf2tmkwm8"]
 
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_7k4xl"]
 [ext_resource type="Resource" path="res://terrain/data.hterrain" id="2_3n07x"]
@@ -23,6 +23,7 @@
 [ext_resource type="Script" path="res://scripts/Mountable.cs" id="16_ykhnp"]
 [ext_resource type="Script" path="res://scripts/MountSlot.cs" id="17_c3rrk"]
 [ext_resource type="PackedScene" uid="uid://dv8b2p4jueniv" path="res://models/hoth_generator.blend" id="20_m1ybq"]
+[ext_resource type="Script" path="res://scripts/LabelInteract.cs" id="24_oi4eh"]
 
 [sub_resource type="Resource" id="Resource_5go8h"]
 script = ExtResource("3_dgx8q")
@@ -168,7 +169,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.074, 89.9138, 285.03)
 material_override = SubResource("StandardMaterial3D_2e7i7")
 cast_shadow = 0
 gi_mode = 0
-emitting = false
 amount = 1000
 lifetime = 17.54
 preprocess = 1.64
@@ -187,7 +187,7 @@ linear_damp = 0.75
 angular_damp = 0.1
 script = ExtResource("12_0qsij")
 vTakeoff = Vector3(0, 15, -2)
-vHoverIdle = Vector3(0, 9.8, -20)
+vHoverIdle = Vector3(0, 9.8, -40)
 vHoverActive = Vector3(0, 9.8, -40)
 vHoverBoost = Vector3(0, 11.8, -70)
 hoverAltMin = 3.0
@@ -241,8 +241,55 @@ shape = SubResource("BoxShape3D_3xva7")
 [node name="hoth_generator" parent="." instance=ExtResource("20_m1ybq")]
 transform = Transform3D(0.681475, 0, -0.731842, 0, 1, 0, 0.731842, 0, 0.681475, 104.18, 0, 389.135)
 
+[node name="hud" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="h" type="HBoxContainer" parent="hud"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="left" type="VBoxContainer" parent="hud/h"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="center" type="VBoxContainer" parent="hud/h"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 4.0
+
+[node name="top_center" type="Control" parent="hud/h/center"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="hint" type="Label" parent="hud/h/center"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("24_oi4eh")
+
+[node name="Control" type="Control" parent="hud/h/center"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 12.0
+
+[node name="right" type="VBoxContainer" parent="hud/h"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [connection signal="OnInteract" from="hoth_hanger2/LeverBody/Interactable" to="hoth_hanger2" method="ToggleAnimSignalEndpoint" binds= ["normal/hoth_hanger_close", "normal/hoth_hanger_open"]]
 [connection signal="OnInteract" from="hoth_hanger2/LeverBody/Interactable" to="hoth_hanger2/LeverBody/LeverDisplay" method="ToggleAnimSignalEndpoint" binds= ["off", "on"]]
 [connection signal="OnInteract" from="Player/Camera3D/InteractRay" to="Player" method="onInteract"]
+[connection signal="OnInteract" from="Player/Camera3D/InteractRay" to="hud/h/center/hint" method="OnInteractSetText"]
 [connection signal="OnMount" from="Player/Rider" to="Player" method="onMount"]
 [connection signal="OnUnmount" from="Player/Rider" to="Player" method="onUnmount"]
