@@ -2,6 +2,7 @@ using Godot;
 using System;
 
 public partial class Player : CharacterBody3D {
+  
   Camera3D camera;
 
 	public const float Speed = 5.0f;
@@ -11,6 +12,9 @@ public partial class Player : CharacterBody3D {
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
 
   Vector2 look;
+
+  [Export]
+  public int team = 1;
 
   [Export]
   float lookSensitivity = 0.005f;

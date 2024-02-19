@@ -1,0 +1,158 @@
+[gd_resource type="Resource" script_class="StateMachine" load_steps=23 format=3 uid="uid://cewoyoqkcdqjt"]
+
+[ext_resource type="Script" path="res://addons/imjp94.yafsm/src/states/StateMachine.gd" id="1_itv14"]
+[ext_resource type="Script" path="res://addons/imjp94.yafsm/src/states/State.gd" id="2_j2lvx"]
+[ext_resource type="Script" path="res://addons/imjp94.yafsm/src/conditions/IntegerCondition.gd" id="3_c5qn8"]
+[ext_resource type="Script" path="res://addons/imjp94.yafsm/src/transitions/Transition.gd" id="4_0frfm"]
+
+[sub_resource type="Resource" id="Resource_t78ks"]
+script = ExtResource("2_j2lvx")
+name = "State"
+metadata/graph_offset = Vector2(745, 162)
+
+[sub_resource type="Resource" id="Resource_1yiw6"]
+script = ExtResource("2_j2lvx")
+name = "AwayTeamCaptured"
+metadata/graph_offset = Vector2(219, 162)
+
+[sub_resource type="Resource" id="Resource_18sd8"]
+script = ExtResource("2_j2lvx")
+name = "Entry"
+metadata/graph_offset = Vector2(505, 82)
+
+[sub_resource type="Resource" id="Resource_4iwcp"]
+script = ExtResource("2_j2lvx")
+name = "Uncaptured"
+metadata/graph_offset = Vector2(487.5, 282)
+
+[sub_resource type="Resource" id="Resource_poekj"]
+script = ExtResource("3_c5qn8")
+value = 0
+comparation = 0
+name = "team"
+
+[sub_resource type="Resource" id="Resource_xevn2"]
+script = ExtResource("4_0frfm")
+from = "Entry"
+to = "Uncaptured"
+conditions = {
+"team": SubResource("Resource_poekj")
+}
+priority = 0
+
+[sub_resource type="Resource" id="Resource_l525x"]
+script = ExtResource("3_c5qn8")
+value = 2
+comparation = 0
+name = "team"
+
+[sub_resource type="Resource" id="Resource_7yifr"]
+script = ExtResource("4_0frfm")
+from = "Entry"
+to = "AwayTeamCaptured"
+conditions = {
+"team": SubResource("Resource_l525x")
+}
+priority = 0
+
+[sub_resource type="Resource" id="Resource_blrog"]
+script = ExtResource("3_c5qn8")
+value = 1
+comparation = 0
+name = "team"
+
+[sub_resource type="Resource" id="Resource_2beej"]
+script = ExtResource("4_0frfm")
+from = "Entry"
+to = "State"
+conditions = {
+"team": SubResource("Resource_blrog")
+}
+priority = 0
+
+[sub_resource type="Resource" id="Resource_8vgax"]
+script = ExtResource("3_c5qn8")
+value = 2
+comparation = 0
+name = "team"
+
+[sub_resource type="Resource" id="Resource_gyuw3"]
+script = ExtResource("4_0frfm")
+from = "Uncaptured"
+to = "AwayTeamCaptured"
+conditions = {
+"team": SubResource("Resource_8vgax")
+}
+priority = 0
+
+[sub_resource type="Resource" id="Resource_mih4f"]
+script = ExtResource("3_c5qn8")
+value = 1
+comparation = 0
+name = "team"
+
+[sub_resource type="Resource" id="Resource_umqd4"]
+script = ExtResource("4_0frfm")
+from = "Uncaptured"
+to = "State"
+conditions = {
+"team": SubResource("Resource_mih4f")
+}
+priority = 0
+
+[sub_resource type="Resource" id="Resource_e80ys"]
+script = ExtResource("3_c5qn8")
+value = 0
+comparation = 0
+name = "team"
+
+[sub_resource type="Resource" id="Resource_hd8to"]
+script = ExtResource("4_0frfm")
+from = "State"
+to = "Uncaptured"
+conditions = {
+"team": SubResource("Resource_e80ys")
+}
+priority = 0
+
+[sub_resource type="Resource" id="Resource_sy64b"]
+script = ExtResource("3_c5qn8")
+value = 0
+comparation = 0
+name = "team"
+
+[sub_resource type="Resource" id="Resource_y52hi"]
+script = ExtResource("4_0frfm")
+from = "AwayTeamCaptured"
+to = "Uncaptured"
+conditions = {
+"team": SubResource("Resource_sy64b")
+}
+priority = 0
+
+[resource]
+script = ExtResource("1_itv14")
+states = {
+"AwayTeamCaptured": SubResource("Resource_1yiw6"),
+"Entry": SubResource("Resource_18sd8"),
+"State": SubResource("Resource_t78ks"),
+"Uncaptured": SubResource("Resource_4iwcp")
+}
+transitions = {
+"AwayTeamCaptured": {
+"Uncaptured": SubResource("Resource_y52hi")
+},
+"Entry": {
+"AwayTeamCaptured": SubResource("Resource_7yifr"),
+"State": SubResource("Resource_2beej"),
+"Uncaptured": SubResource("Resource_xevn2")
+},
+"State": {
+"Uncaptured": SubResource("Resource_hd8to")
+},
+"Uncaptured": {
+"AwayTeamCaptured": SubResource("Resource_gyuw3"),
+"State": SubResource("Resource_umqd4")
+}
+}
+name = ""

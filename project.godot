@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="laststand"
-run/main_scene="res://hoth.tscn"
+run/main_scene="res://scenes/hoth.tscn"
 config/features=PackedStringArray("4.2", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -21,7 +21,7 @@ project/assembly_name="laststand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/zylann.hterrain/plugin.cfg")
+enabled=PackedStringArray("res://addons/imjp94.yafsm/plugin.cfg", "res://addons/zylann.hterrain/plugin.cfg")
 
 [input]
 
