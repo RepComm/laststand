@@ -64,8 +64,19 @@ public partial class HoverVehicle : RigidBody3D {
 	}
 
   public void SetMode (HoverMode m) {
-    GD.Print("Mode was: " + this.hoverMode + ", now is: " + m);
+    // GD.Print("Mode was: " + this.hoverMode + ", now is: " + m);
     this.hoverMode = m;
+
+    if (this.isDriving) {
+      AxisLockAngularX = true;
+      AxisLockAngularY = true;
+      AxisLockAngularZ = true;
+    } else {
+
+      AxisLockAngularX = false;
+      AxisLockAngularY = false;
+      AxisLockAngularZ = false;
+    }
   }
   Vector2 look = new();
   //The value displayRotation lerps to
@@ -94,6 +105,26 @@ public partial class HoverVehicle : RigidBody3D {
           this.SetMode(HoverMode.TakingOff);
         }
       }
+      if (Input.IsActionPressed("engine_boost")) {
+        if (this.hoverMode == HoverMode.HoverActive) {
+          this.SetMode(HoverMode.HoverBoost);
+        }
+      } else {
+        if (this.hoverMode == HoverMode.HoverBoost) {
+          this.SetMode(HoverMode.HoverActive);
+        }
+      }
+      
+      if (Input.IsActionPressed("engine_throttle")) {
+        if (this.hoverMode == HoverMode.HoverActive) {
+          this.SetMode(HoverMode.HoverIdle);
+        }
+      } else {
+        if (this.hoverMode == HoverMode.HoverIdle) {
+          this.SetMode(HoverMode.HoverActive);
+        }
+      }
+      
     }
   }
 
@@ -126,8 +157,10 @@ public partial class HoverVehicle : RigidBody3D {
       }
 
     } else if (this.hoverMode == HoverMode.TakingOff) {
+      //Transition TakingOff -> Active
       if (this.altitude > this.hoverAltMin) {
-        this.SetMode(HoverMode.HoverIdle);
+        // this.SetMode(HoverMode.HoverIdle);
+        this.SetMode(HoverMode.HoverActive);
       } else {
         Vector3Set(ref this.thrust, this.vTakeoff);
       }
@@ -158,7 +191,12 @@ public partial class HoverVehicle : RigidBody3D {
       this.targetRotation.Y - this.displayRotation.Y
     ) / 10f;
 
-    this.Rotation = this.displayRotation;//this.targetRotation;
+    if (this.isDriving) {
+      this.Rotation = this.displayRotation;//this.targetRotation;
+    } else {
+      this.targetRotation = this.Rotation;
+      this.displayRotation = this.Rotation;
+    }
     
 
     //consume mouse movement for this frame

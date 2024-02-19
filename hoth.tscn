@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://bc3ywf2tmkwm8"]
+[gd_scene load_steps=41 format=3 uid="uid://bc3ywf2tmkwm8"]
 
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_7k4xl"]
 [ext_resource type="Resource" path="res://terrain/data.hterrain" id="2_3n07x"]
@@ -23,7 +23,10 @@
 [ext_resource type="Script" path="res://scripts/Mountable.cs" id="16_ykhnp"]
 [ext_resource type="Script" path="res://scripts/MountSlot.cs" id="17_c3rrk"]
 [ext_resource type="PackedScene" uid="uid://dv8b2p4jueniv" path="res://models/hoth_generator.blend" id="20_m1ybq"]
+[ext_resource type="Texture2D" uid="uid://bmthk4l0u6asj" path="res://textures/ui_balance.svg" id="24_i5nri"]
+[ext_resource type="Texture2D" uid="uid://cldeaa886ye46" path="res://textures/ui_tool.svg" id="24_jmmq6"]
 [ext_resource type="Script" path="res://scripts/LabelInteract.cs" id="24_oi4eh"]
+[ext_resource type="PackedScene" uid="uid://e6mvi60pt85s" path="res://models/command_post.tscn" id="27_14t16"]
 
 [sub_resource type="Resource" id="Resource_5go8h"]
 script = ExtResource("3_dgx8q")
@@ -169,6 +172,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.074, 89.9138, 285.03)
 material_override = SubResource("StandardMaterial3D_2e7i7")
 cast_shadow = 0
 gi_mode = 0
+emitting = false
 amount = 1000
 lifetime = 17.54
 preprocess = 1.64
@@ -179,15 +183,12 @@ draw_skin = SubResource("Skin_7j5ut")
 
 [node name="SnowSpeeder" type="RigidBody3D" parent="."]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 85.0551, 0.902608, 159.626)
-axis_lock_angular_x = true
-axis_lock_angular_y = true
-axis_lock_angular_z = true
 continuous_cd = true
 linear_damp = 0.75
 angular_damp = 0.1
 script = ExtResource("12_0qsij")
 vTakeoff = Vector3(0, 15, -2)
-vHoverIdle = Vector3(0, 9.8, -40)
+vHoverIdle = Vector3(0, 9.8, -20)
 vHoverActive = Vector3(0, 9.8, -40)
 vHoverBoost = Vector3(0, 11.8, -70)
 hoverAltMin = 3.0
@@ -251,9 +252,13 @@ grow_vertical = 2
 
 [node name="h" type="HBoxContainer" parent="hud"]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 64.0
+offset_top = 64.0
+offset_right = -64.0
+offset_bottom = -64.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -261,14 +266,37 @@ grow_vertical = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="center" type="VBoxContainer" parent="hud/h/left"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 4.0
+
+[node name="ui_tool" type="TextureRect" parent="hud/h/left/center"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("24_jmmq6")
+expand_mode = 3
+
+[node name="empty_1" type="Control" parent="hud/h/left/center"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control" type="Control" parent="hud/h/left/center"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 12.0
+
 [node name="center" type="VBoxContainer" parent="hud/h"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 4.0
 
-[node name="top_center" type="Control" parent="hud/h/center"]
+[node name="top_center" type="TextureRect" parent="hud/h/center"]
 layout_mode = 2
 size_flags_vertical = 3
+texture = ExtResource("24_i5nri")
+expand_mode = 3
 
 [node name="hint" type="Label" parent="hud/h/center"]
 layout_mode = 2
@@ -286,6 +314,9 @@ size_flags_stretch_ratio = 12.0
 [node name="right" type="VBoxContainer" parent="hud/h"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="command_post" parent="." instance=ExtResource("27_14t16")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80.1559, 0.619653, 103.472)
 
 [connection signal="OnInteract" from="hoth_hanger2/LeverBody/Interactable" to="hoth_hanger2" method="ToggleAnimSignalEndpoint" binds= ["normal/hoth_hanger_close", "normal/hoth_hanger_open"]]
 [connection signal="OnInteract" from="hoth_hanger2/LeverBody/Interactable" to="hoth_hanger2/LeverBody/LeverDisplay" method="ToggleAnimSignalEndpoint" binds= ["off", "on"]]
